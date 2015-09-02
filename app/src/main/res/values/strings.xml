@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">AlcoholMeter</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="weight_label">Weight (lbs)</string>
+    <string name="gender">Gender</string>
+    <string name="save">Save</string>
+    <string name="drink_size">Drink Size</string>
+    <string name="oneoz">1 oz</string>
+    <string name="fiveOz">5 oz</string>
+    <string name="twelveOz">12 oz</string>
+    <string name="alcoholPercentage">Alcohol %</string>
+    <string name="addDrink">Add Drink</string>
+    <string name="reset">Reset</string>
+    <string name="yourstatus">Your Status:</string>
+    <string name="bacLevel">BAC Level:</string>
+    <string name="nilVal">0.00</string>
+</resources>
