@@ -120,15 +120,24 @@ public class MainActivity extends AppCompatActivity {
             if (radioId == ((RadioButton) findViewById(R.id.radioButtonOneOz)).getId()) {
                 drinkSize = 1;
                 tvResult.setText(bacCalculation(Integer.parseInt(etWeight.getText().toString()), gender, drinkSize, alcoholPer));
-//                int val = Math.round(Integer.parseInt(bacCalculation(Integer.parseInt(etWeight.getText().toString()), gender, drinkSize, alcoholPer)))*100;
-//                pbStatus.setProgress(val);
-
+                double dval = Math.round(Double.parseDouble(bacCalculation(Integer.parseInt(etWeight.getText().toString()), gender, drinkSize, alcoholPer))*100);
+                int val = (int)dval;
+                Log.d("A","pbVal"+dval);
+                pbStatus.setProgress(val);
             } else if (radioId == ((RadioButton) findViewById(R.id.radioButtonfiveOz)).getId()) {
                 drinkSize = 5;
                 tvResult.setText(bacCalculation(Integer.parseInt(etWeight.getText().toString()), gender, drinkSize, alcoholPer));
+                double dval = Math.round(Double.parseDouble(bacCalculation(Integer.parseInt(etWeight.getText().toString()), gender, drinkSize, alcoholPer))*100);
+                int val = (int)dval;
+                Log.d("A","pbVal"+dval);
+                pbStatus.setProgress(val);
             } else if (radioId == ((RadioButton) findViewById(R.id.radioButtonTwelveOz)).getId()) {
                 drinkSize = 12;
                 tvResult.setText(bacCalculation(Integer.parseInt(etWeight.getText().toString()), gender, drinkSize, alcoholPer));
+                double dval = Math.round(Double.parseDouble(bacCalculation(Integer.parseInt(etWeight.getText().toString()), gender, drinkSize, alcoholPer))*100);
+                int val = (int)dval;
+                Log.d("A","pbVal"+dval);
+                pbStatus.setProgress(val);
             } else {
                 Log.d("A", "Error in radio selection");
             }
@@ -152,12 +161,14 @@ public class MainActivity extends AppCompatActivity {
  *           c. r = a gender constant of alcohol distribution (.73 for men and .66 for women)
 */
             bac = (drinkSize * alcoholPer / 100 * (5.14 / Weight) * 0.73);
+            Log.d("A","BACMale"+bac);
             return f.format(bac);
 
 
         } else {
             Log.d("A", "Invalid no gender selected:" + gender);
             bac = (drinkSize * alcoholPer / 100 * (5.14 / Weight) * 0.66);
+            Log.d("A","BACFeMale"+bac);
             return f.format(bac);
         }
     }
