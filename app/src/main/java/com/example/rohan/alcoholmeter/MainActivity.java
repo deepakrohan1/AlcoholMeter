@@ -115,10 +115,13 @@ public class MainActivity extends AppCompatActivity {
         radioId = rgOz.getCheckedRadioButtonId();
         Log.d("A", "Chrrrr" + radioId + "");
         Log.d("A", "Progress " + alcoholPer + "" + "Weight " + etWeight.getText().toString() + "Gender " + gender);
+        pbStatus.setMax(25);
         if (checkNull()) {
             if (radioId == ((RadioButton) findViewById(R.id.radioButtonOneOz)).getId()) {
                 drinkSize = 1;
                 tvResult.setText(bacCalculation(Integer.parseInt(etWeight.getText().toString()), gender, drinkSize, alcoholPer));
+//                int val = Math.round(Integer.parseInt(bacCalculation(Integer.parseInt(etWeight.getText().toString()), gender, drinkSize, alcoholPer)))*100;
+//                pbStatus.setProgress(val);
 
             } else if (radioId == ((RadioButton) findViewById(R.id.radioButtonfiveOz)).getId()) {
                 drinkSize = 5;
@@ -141,12 +144,13 @@ public class MainActivity extends AppCompatActivity {
         Log.d("A", "Progress " + alcoholPer + "" + "Weight " + Weight + "Gender " + gender + "alcoholSi" + drinkSize);
         double bac;
         if (gender.equals("M")) {
-
-//            % BAC = (A x 5.14 / W x r). [Here
-//            we are ignoring the passage of time in the formula.] See Figure 2(a).
-//                    a. A = liquid ounces of alcohol consumed = ounces * alcohol percentage (i.e. 5 x .15)
-//            b. W = a person’s weight in pounds
-//            c. r = a gender constant of alcohol distribution (.73 for men and .66 for women)
+/*
+ *           % BAC = (A x 5.14 / W x r). [Here
+ *           we are ignoring the passage of time in the formula.] See Figure 2(a).
+ *                   a. A = liquid ounces of alcohol consumed = ounces * alcohol percentage (i.e. 5 x .15)
+ *           b. W = a person’s weight in pounds
+ *           c. r = a gender constant of alcohol distribution (.73 for men and .66 for women)
+*/
             bac = (drinkSize * alcoholPer / 100 * (5.14 / Weight) * 0.73);
             return f.format(bac);
 
