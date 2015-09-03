@@ -1,11 +1,13 @@
 package com.example.rohan.alcoholmeter;
 
+import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ProgressBar;
@@ -34,7 +36,12 @@ public class MainActivity extends AppCompatActivity {
     int maxValue = 25;
     final int minValue = 5;
     int radioId = 0;
-    DecimalFormat f = new DecimalFormat("##.00");
+    double previousDrink = 0.00;
+    DecimalFormat f = new DecimalFormat("##.######");
+    DecimalFormat tF = new DecimalFormat("#.##");
+    double finalVal;
+    double drinkChange;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +60,26 @@ public class MainActivity extends AppCompatActivity {
         sbalcohol = ((SeekBar) findViewById(R.id.percentageAlcohol));
         sbalcohol.setProgress(0);
         sbalcohol.setMax((maxValue - minValue) / stepSize);
+//        ActionBar ab = getActionBar();
+//        ab.setDisplayOptions(ab.getDisplayOptions()
+//                                | ActionBar.DISPLAY_SHOW_CUSTOM);
+//        ImageView imageView = new ImageView(ab.getThemedContext());
+//        imageView.setScaleType(ImageView.ScaleType.CENTER);
+//        imageView.setImageResource(R.drawable.ic_action_name2);
+//        ActionBar.LayoutParams layoutParams = new ActionBar.LayoutParams(
+//                ActionBar.LayoutParams.WRAP_CONTENT,
+//                ActionBar.LayoutParams.WRAP_CONTENT, Gravity.RIGHT
+//                | Gravity.CENTER_VERTICAL);
+//        layoutParams.rightMargin = 0;
+//        imageView.setLayoutParams(layoutParams);
+//        ab.setCustomView(imageView);
+
+        android.support.v7.app.ActionBar actionBar = getSupportActionBar();
+        actionBar.setLogo(R.drawable.ic_launcher);
+        actionBar.setTitle(R.string.app_title);
+        actionBar.setDisplayUseLogoEnabled(true);
+        actionBar.setDisplayShowHomeEnabled(true);
+
         /**
          * Intialization
          */
@@ -102,6 +129,9 @@ public class MainActivity extends AppCompatActivity {
     public void resetAll(View view) {
         etWeight.setText("");
         rgOz.check(findViewById(R.id.radioButtonOneOz).getId());
+        tvResult.setText("0.00");
+        pbStatus.setProgress(0);
+        previousDrink = 0.0;
         //TODO: Check BAC field and Status field
     }
 
@@ -119,25 +149,38 @@ public class MainActivity extends AppCompatActivity {
         if (checkNull()) {
             if (radioId == ((RadioButton) findViewById(R.id.radioButtonOneOz)).getId()) {
                 drinkSize = 1;
-                tvResult.setText(bacCalculation(Integer.parseInt(etWeight.getText().toString()), gender, drinkSize, alcoholPer));
-                double dval = Math.round(Double.parseDouble(bacCalculation(Integer.parseInt(etWeight.getText().toString()), gender, drinkSize, alcoholPer))*100);
-                int val = (int)dval;
-                Log.d("A","pbVal"+dval);
+
+                drinkChange = Double.parseDouble(bacCalculation(Integer.parseInt(etWeight.getText().toString()), gender, drinkSize, alcoholPer));
+                finalVal = previousDrink + drinkChange;
+                previousDrink = finalVal;
+                tvResult.setText(tF.format(finalVal));
+                double dval = Math.round((finalVal) * 100);
+                int val = (int) dval;
+                Log.d("A", "pbVal" + dval + "PV " + previousDrink + " FD " + finalVal);
                 pbStatus.setProgress(val);
+                displayStatus(tF.format(finalVal));
             } else if (radioId == ((RadioButton) findViewById(R.id.radioButtonfiveOz)).getId()) {
                 drinkSize = 5;
-                tvResult.setText(bacCalculation(Integer.parseInt(etWeight.getText().toString()), gender, drinkSize, alcoholPer));
-                double dval = Math.round(Double.parseDouble(bacCalculation(Integer.parseInt(etWeight.getText().toString()), gender, drinkSize, alcoholPer))*100);
-                int val = (int)dval;
-                Log.d("A","pbVal"+dval);
+                drinkChange = Double.parseDouble(bacCalculation(Integer.parseInt(etWeight.getText().toString()), gender, drinkSize, alcoholPer));
+                finalVal = previousDrink + drinkChange;
+                previousDrink = finalVal;
+                tvResult.setText(tF.format(finalVal));
+                double dval = Math.round((finalVal) * 100);
+                int val = (int) dval;
+                Log.d("A", "pbVal" + dval + "PV " + previousDrink + " FD " + finalVal);
                 pbStatus.setProgress(val);
+                displayStatus(tF.format(finalVal));
             } else if (radioId == ((RadioButton) findViewById(R.id.radioButtonTwelveOz)).getId()) {
                 drinkSize = 12;
-                tvResult.setText(bacCalculation(Integer.parseInt(etWeight.getText().toString()), gender, drinkSize, alcoholPer));
-                double dval = Math.round(Double.parseDouble(bacCalculation(Integer.parseInt(etWeight.getText().toString()), gender, drinkSize, alcoholPer))*100);
-                int val = (int)dval;
-                Log.d("A","pbVal"+dval);
+                drinkChange = Double.parseDouble(bacCalculation(Integer.parseInt(etWeight.getText().toString()), gender, drinkSize, alcoholPer));
+                finalVal = previousDrink + drinkChange;
+                previousDrink = finalVal;
+                tvResult.setText(tF.format(finalVal));
+                double dval = Math.round((finalVal) * 100);
+                int val = (int) dval;
+                Log.d("A", "pbVal" + dval + "PV " + previousDrink + " FD " + finalVal);
                 pbStatus.setProgress(val);
+                displayStatus(tF.format(finalVal));
             } else {
                 Log.d("A", "Error in radio selection");
             }
@@ -159,17 +202,20 @@ public class MainActivity extends AppCompatActivity {
  *                   a. A = liquid ounces of alcohol consumed = ounces * alcohol percentage (i.e. 5 x .15)
  *           b. W = a person’s weight in pounds
  *           c. r = a gender constant of alcohol distribution (.73 for men and .66 for women)
+ *
 */
-            bac = (drinkSize * alcoholPer / 100 * (5.14 / Weight) * 0.73);
-            Log.d("A","BACMale"+bac);
-            return f.format(bac);
+            double alcohol = drinkSize * alcoholPer / 10000;
+            bac = ((alcohol * 5.1400) / (Weight * 0.7300));
+            Log.d("A", "BACMale" + tF.format(bac) + ", DrinkSize " + drinkSize + ", alcoholPer " + alcoholPer + ",Weight " + Weight + ", alcohol" + alcohol);
+            return tF.format(bac);
 
 
         } else {
             Log.d("A", "Invalid no gender selected:" + gender);
-            bac = (drinkSize * alcoholPer / 100 * (5.14 / Weight) * 0.66);
-            Log.d("A","BACFeMale"+bac);
-            return f.format(bac);
+            double alcohol = drinkSize * alcoholPer / 100.0000;
+            bac = ((alcohol * 5.1400) / (Weight * 0.6600));
+            Log.d("A", "BACFeMale" + tF.format(bac) + ", DrinkSize " + drinkSize + ", alcoholPer " + alcoholPer + ",Weight " + Weight + ", alcohol" + alcohol);
+            return tF.format(bac);
         }
     }
 
@@ -200,9 +246,37 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
+    /**
+     * Final Text bar display
+     *
+     * @param bacLevel
+     */
+    public void displayStatus(String bacLevel) {
+        Log.d("A", "BACLevel" + bacLevel);
+        Double bacVal = Double.parseDouble(bacLevel);
+        if (bacVal < 0.08) {
+            tvStatus.setText("You're Safe");
+            tvStatus.setBackgroundColor(Color.parseColor("#4CAF50"));
+        } else if (bacVal > 0.08 && bacVal < 0.20) {
+            tvStatus.setText("Over the Limit!");
+            tvStatus.setBackgroundColor(Color.parseColor("#FF9800"));
+        } else if (bacVal >= 0.25) {
+            tvStatus.setText("No more drinks for you.");
+            tvStatus.setBackgroundColor(Color.parseColor("#F44336"));
+//            (Button)findViewById(R.id.buttonSave).
+
+        }
+
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
+
+//        MenuInflater inflater = getMenuInflater();
+//        inflater.inflate(R.menu.menu_main, menu);
+//        return super.onCreateOptionsMenu(menu);
+
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
