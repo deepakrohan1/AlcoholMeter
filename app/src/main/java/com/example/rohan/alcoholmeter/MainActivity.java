@@ -1,6 +1,10 @@
 package com.example.rohan.alcoholmeter;
 
+import android.annotation.TargetApi;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
+import android.os.Build;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -18,7 +22,6 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.lang.reflect.Array;
 import java.text.DecimalFormat;
 
 public class MainActivity extends AppCompatActivity {
@@ -72,20 +75,8 @@ public class MainActivity extends AppCompatActivity {
         bAddDrink = ((Button) findViewById(R.id.addDrink));
         bsave = ((Button) findViewById(R.id.buttonSave));
         bclearAllContent = ((Button) findViewById(R.id.buttonReset));
-//        ActionBar ab = getActionBar();
-//        ab.setDisplayOptions(ab.getDisplayOptions()
-//                                | ActionBar.DISPLAY_SHOW_CUSTOM);
-//        ImageView imageView = new ImageView(ab.getThemedContext());
-//        imageView.setScaleType(ImageView.ScaleType.CENTER);
-//        imageView.setImageResource(R.drawable.ic_action_name2);
-//        ActionBar.LayoutParams layoutParams = new ActionBar.LayoutParams(
-//                ActionBar.LayoutParams.WRAP_CONTENT,
-//                ActionBar.LayoutParams.WRAP_CONTENT, Gravity.RIGHT
-//                | Gravity.CENTER_VERTICAL);
-//        layoutParams.rightMargin = 0;
-//        imageView.setLayoutParams(layoutParams);
-//        ab.setCustomView(imageView);
 
+        //Adding the custom icon on the Action Bar
         android.support.v7.app.ActionBar actionBar = getSupportActionBar();
         actionBar.setLogo(R.drawable.ic_launcher);
         actionBar.setTitle(R.string.app_title);
@@ -138,6 +129,7 @@ public class MainActivity extends AppCompatActivity {
     /**
      * Reset Button
      */
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     public void resetAll(View view) {
         etWeight.setText("");
         rgOz.check(findViewById(R.id.radioButtonOneOz).getId());
@@ -146,10 +138,10 @@ public class MainActivity extends AppCompatActivity {
         previousDrink = 0.0;
         bAddDrink.setEnabled(true);
         bsave.setEnabled(true);
-       previousAlcoholVal = 0.00000;
+        previousAlcoholVal = 0.00000;
         currentValue = 0.0000;
-        tvStatus.setText("0.00");
-        tvStatus.setBackgroundColor(Color.TRANSPARENT);
+        tvStatus.setText("You're safe.");
+        tvStatus.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.textviewlayout));
         //TODO: Check BAC field and Status field
     }
 
@@ -176,21 +168,12 @@ public class MainActivity extends AppCompatActivity {
                 drinkSize = 12;
                 bacLayoutUpdater(drinkSize, alcoholPer);
 //                alcoholConcentration(drinkSize, alcoholPer,gender);
-//
-// drinkChange = Double.parseDouble(bacCalculation(Integer.parseInt(etWeight.getText().toString()), gender, drinkSize, alcoholPer));
-//                finalVal = previousDrink + drinkChange;
-//                previousDrink = finalVal;
-//                tvResult.setText(tF.format(finalVal));
-//                double dval = Math.round((finalVal) * 100);
-//                int val = (int) dval;
-//                Log.d("A", "pbVal" + dval + "PV " + previousDrink + " FD " + finalVal);
-//                pbStatus.setProgress(val);
-//                displayStatus(tF.format(finalVal));
+
             } else {
                 Log.d("A", "Error in radio selection");
             }
         } else {
-            toastMessage();
+            setError();
         }
     }
 
@@ -200,7 +183,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void bacLayoutUpdater(int drinkSi, int alcoholPe) {
 //        alcoholConcentration(drinkSi,alcoholPe,gender);
-        drinkChange =  Double.parseDouble(  alcoholConcentration(drinkSi,alcoholPe,gender));
+        drinkChange = Double.parseDouble(alcoholConcentration(drinkSi, alcoholPe, gender));
 //        drinkChange = Double.parseDouble(bacCalculation(gender,alcoholPe));
         finalVal = previousDrink + drinkChange;
         previousDrink = finalVal;
@@ -216,10 +199,10 @@ public class MainActivity extends AppCompatActivity {
      * Alcohol Calculation
      */
 
-    public String alcoholConcentration(int drinkSize, int alcoholPer, String gender){
+    public String alcoholConcentration(int drinkSize, int alcoholPer, String gender) {
 //        double previousAlcoholVal = ;
 
-        currentValue = drinkSize * alcoholPer /100.0000 + previousAlcoholVal;
+        currentValue = drinkSize * alcoholPer / 100.0000 + previousAlcoholVal;
         previousAlcoholVal = currentValue;
         Log.d("A", "Current Val " + f.format(currentValue) + ", Previos" + f.format(previousAlcoholVal));
         return bacCalculation(gender, currentValue);
@@ -229,7 +212,7 @@ public class MainActivity extends AppCompatActivity {
     /**
      * BAC Calculation
      */
-    public String bacCalculation(String gender,  double alcoholConc) {
+    public String bacCalculation(String gender, double alcoholConc) {
 
         double bac;
         weight = Integer.parseInt(etWeight.getText().toString());
@@ -245,7 +228,7 @@ public class MainActivity extends AppCompatActivity {
 */
 //            double alcohol = drinkSize * alcoholPer / 100.0000;
             bac = ((alcoholConc * 5.1400) / (weight * 0.7300));
-            Log.d("A", "BACMale" + tF.format(bac) + ",weight " + weight +" alcoholConc"+ alcoholConc);
+            Log.d("A", "BACMale" + tF.format(bac) + ",weight " + weight + " alcoholConc" + alcoholConc);
             return tF.format(bac);
 
 
@@ -253,7 +236,7 @@ public class MainActivity extends AppCompatActivity {
             Log.d("A", "Invalid no gender selected:" + gender);
             double alcohol = drinkSize * alcoholPer / 100.0000;
             bac = ((alcoholConc * 5.1400) / (weight * 0.6600));
-            Log.d("A", "BACFeMale" + tF.format(bac) + ",weight " + weight +" alcoholConc"+ alcoholConc);
+            Log.d("A", "BACFeMale" + tF.format(bac) + ",weight " + weight + " alcoholConc" + alcoholConc);
             return tF.format(bac);
         }
     }
@@ -264,25 +247,36 @@ public class MainActivity extends AppCompatActivity {
      * @param view
      */
     public void saveAll(View view) {
+        double bacNew = 0.0;
         if (checkNull()) {
 
-            pounds = Integer.parseInt(etWeight.getText().toString());
+            int newPounds = Integer.parseInt(etWeight.getText().toString());
 
-            drinkChange = Double.parseDouble(alcoholConcentration(drinkSize,alcoholPer,gender));
-            tvResult.setText(tF.format(drinkChange));
-            double dval = Math.round((drinkChange) * 100);
+//            drinkChange = Double.parseDouble(alcoholConcentration(drinkSize, alcoholPer, gender));
+            if (gender.equals("M")) {
+                bacNew = ((currentValue * 5.1400) / (newPounds * 0.73));
+                Log.d("A", "BACSaMale" + tF.format(bacNew) + ",weight " + newPounds);
+
+            } else {
+                bacNew = ((currentValue * 5.1400) / (newPounds * 0.66));
+                Log.d("A", "BACSaFeMale" + tF.format(bacNew) + ",weight " + newPounds);
+
+            }
+
+            tvResult.setText(tF.format(bacNew));
+            double dval = Math.round((bacNew) * 100);
             int val = (int) dval;
             pbStatus.setProgress(val);
-            displayStatus(tF.format(drinkChange));
+            displayStatus(tF.format(bacNew));
         } else
-            toastMessage();
+            setError();
     }
     /*
      * Toast Message On Empty
      */
 
-    public void toastMessage() {
-        Toast.makeText(getApplicationContext(), "Enter a valid input", Toast.LENGTH_SHORT).show();
+    public void setError() {
+        Toast.makeText(getApplicationContext(), "Enter the weight in lbs.", Toast.LENGTH_SHORT).show();
     }
 
     public boolean checkNull() {
@@ -297,37 +291,35 @@ public class MainActivity extends AppCompatActivity {
      *
      * @param bacLevel
      */
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     public void displayStatus(String bacLevel) {
         Log.d("A", "BACLevel" + bacLevel);
         Double bacVal = Double.parseDouble(bacLevel);
         if (bacVal < 0.08) {
             Log.d("A", "Green");
-            tvStatus.setText("You're Safe");
-            tvStatus.setBackgroundColor(Color.parseColor("#4CAF50"));
+            tvStatus.setText("You're safe.");
+            tvStatus.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.textviewlayout));
         } else if (bacVal > 0.08 && bacVal < 0.20) {
-            Log.d("A", "Amber");
-            tvStatus.setText("Over the Limit!");
-            tvStatus.setBackgroundColor(Color.parseColor("#FF9800"));
-        } else if (bacVal >= 0.25) {
+            Log.d("A", "Be careful...");
+            tvStatus.setText("Be careful...");
+            tvStatus.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.textviewlayoutamber));
+        } else if (bacVal >= 0.20 && bacVal < 0.25) {
             Log.d("A", "Disable, Red");
-            tvStatus.setText("No more drinks for you.");
-            tvStatus.setBackgroundColor(Color.parseColor("#F44336"));
+            tvStatus.setText("Over the Limit!");
+            tvStatus.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.textviewred));
+
+        } else if (bacVal >= 0.25) {
+            Toast.makeText(getApplicationContext(), "No more drinks for you", Toast.LENGTH_LONG).show();
             bAddDrink.setEnabled(false);
             bsave.setEnabled(false);
-
-
         }
 
     }
 
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-
-//        MenuInflater inflater = getMenuInflater();
-//        inflater.inflate(R.menu.menu_main, menu);
-//        return super.onCreateOptionsMenu(menu);
-
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }

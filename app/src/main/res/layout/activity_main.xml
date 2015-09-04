@@ -207,10 +207,11 @@
             android:layout_width="wrap_content"
             android:layout_marginLeft="10dp"
             android:layout_height="wrap_content"
-            android:padding="10dp"
+            android:padding="5dp"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:id="@+id/finalStatus"
-            android:text="MSG"
+            android:text="@string/you_r_safe"
+            android:background="@drawable/textviewlayout"
             android:layout_gravity="center_vertical" />
     </LinearLayout>
 

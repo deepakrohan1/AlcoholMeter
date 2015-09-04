@@ -16,5 +16,6 @@
     <string name="reset">Reset</string>
     <string name="yourstatus">Your Status:</string>
     <string name="bacLevel">BAC Level:</string>
+    <string name="you_r_safe">You\'re safe. </string>
     <string name="nilVal">0.00</string>
 </resources>
