@@ -196,7 +196,7 @@
 
         <TextView
             android:layout_width="wrap_content"
-            android:layout_marginLeft="30dp"
+            android:layout_marginLeft="70dp"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="@string/yourstatus"
@@ -208,6 +208,8 @@
             android:layout_marginLeft="10dp"
             android:layout_height="wrap_content"
             android:padding="5dp"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:id="@+id/finalStatus"
             android:text="@string/you_r_safe"

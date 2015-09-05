@@ -1,8 +1,6 @@
 package com.example.rohan.alcoholmeter;
 
 import android.annotation.TargetApi;
-import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -25,9 +23,7 @@ import android.widget.Toast;
 import java.text.DecimalFormat;
 
 public class MainActivity extends AppCompatActivity {
-    int pounds;
-    int percentage;
-    int weight;
+    int newPounds;
     String gender = "F";
     EditText etWeight;
     Switch sGender;
@@ -53,6 +49,9 @@ public class MainActivity extends AppCompatActivity {
     int alcoholPer = 5;
     double previousAlcoholVal = 0.00000;
     double currentValue = 0.0000;
+    boolean isClicked = false;
+    Double bacVal;
+
 
 
     @Override
@@ -141,6 +140,7 @@ public class MainActivity extends AppCompatActivity {
         previousAlcoholVal = 0.00000;
         currentValue = 0.0000;
         tvStatus.setText("You're safe.");
+        isClicked=false;
         tvStatus.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.textviewlayout));
         //TODO: Check BAC field and Status field
     }
@@ -149,31 +149,37 @@ public class MainActivity extends AppCompatActivity {
      * addDrink
      */
     public void addDrink(View view) {
+
         alcoholPer = Integer.parseInt(((TextView) findViewById(R.id.textViewPerAlcohol)).getText().toString());
         Log.d("A", radioId + "");
         radioId = rgOz.getCheckedRadioButtonId();
         Log.d("A", "Chrrrr" + radioId + "");
-        Log.d("A", "Progress " + alcoholPer + "" + "Weight " + etWeight.getText().toString() + "Gender " + gender);
+        Log.d("A", "Progress " + alcoholPer + "" + "Weight " + newPounds + "Gender " + gender);
         pbStatus.setMax(25);
-        if (checkNull()) {
-            if (radioId == ((RadioButton) findViewById(R.id.radioButtonOneOz)).getId()) {
-                drinkSize = 1;
-                bacLayoutUpdater(drinkSize, alcoholPer);
+        if(isClicked == true) {
+            Log.d("A","button_save true");
+            if (checkNull()) {
+                if (radioId == ((RadioButton) findViewById(R.id.radioButtonOneOz)).getId()) {
+                    drinkSize = 1;
+                    bacLayoutUpdater(drinkSize, alcoholPer);
 //                alcoholConcentration(drinkSize,alcoholPer,gender);
-            } else if (radioId == ((RadioButton) findViewById(R.id.radioButtonfiveOz)).getId()) {
-                drinkSize = 5;
-                bacLayoutUpdater(drinkSize, alcoholPer);
+                } else if (radioId == ((RadioButton) findViewById(R.id.radioButtonfiveOz)).getId()) {
+                    drinkSize = 5;
+                    bacLayoutUpdater(drinkSize, alcoholPer);
 //                alcoholConcentration(drinkSize, alcoholPer,gender);
-            } else if (radioId == ((RadioButton) findViewById(R.id.radioButtonTwelveOz)).getId()) {
-                drinkSize = 12;
-                bacLayoutUpdater(drinkSize, alcoholPer);
+                } else if (radioId == ((RadioButton) findViewById(R.id.radioButtonTwelveOz)).getId()) {
+                    drinkSize = 12;
+                    bacLayoutUpdater(drinkSize, alcoholPer);
 //                alcoholConcentration(drinkSize, alcoholPer,gender);
 
+                } else {
+                    Log.d("A", "Error in radio selection");
+                }
             } else {
-                Log.d("A", "Error in radio selection");
+                setErrorMessage();
             }
-        } else {
-            setError();
+        }else {
+            Toast.makeText(getApplicationContext(),"Save the Weight to Proceed",Toast.LENGTH_LONG).show();
         }
     }
 
@@ -185,8 +191,9 @@ public class MainActivity extends AppCompatActivity {
 //        alcoholConcentration(drinkSi,alcoholPe,gender);
         drinkChange = Double.parseDouble(alcoholConcentration(drinkSi, alcoholPe, gender));
 //        drinkChange = Double.parseDouble(bacCalculation(gender,alcoholPe));
-        finalVal = previousDrink + drinkChange;
-        previousDrink = finalVal;
+//        finalVal = previousDrink + drinkChange;
+//        previousDrink = finalVal;
+        finalVal=drinkChange;
         tvResult.setText(tF.format(finalVal));
         double dval = Math.round((finalVal) * 100);
         int val = (int) dval;
@@ -215,8 +222,8 @@ public class MainActivity extends AppCompatActivity {
     public String bacCalculation(String gender, double alcoholConc) {
 
         double bac;
-        weight = Integer.parseInt(etWeight.getText().toString());
-        Log.d("A", "Progress " + alcoholPer + "" + "Weight " + weight + "Gender " + gender + "alcoholSi" + drinkSize);
+//        weight = Integer.parseInt(etWeight.getText().toString());
+        Log.d("A", "Progress " + alcoholPer + "" + "Weight " + newPounds + "Gender " + gender + "alcoholSi" + drinkSize);
         if (gender.equals("M")) {
 /*
  *           % BAC = (A x 5.14 / W x r). [Here
@@ -227,56 +234,29 @@ public class MainActivity extends AppCompatActivity {
  *
 */
 //            double alcohol = drinkSize * alcoholPer / 100.0000;
-            bac = ((alcoholConc * 5.1400) / (weight * 0.7300));
-            Log.d("A", "BACMale" + tF.format(bac) + ",weight " + weight + " alcoholConc" + alcoholConc);
+            bac = ((alcoholConc * 5.1400) / (newPounds * 0.7300));
+            Log.d("A", "BACMale" + tF.format(bac) + ",weight " + newPounds + " alcoholConc" + alcoholConc);
             return tF.format(bac);
 
 
         } else {
             Log.d("A", "Invalid no gender selected:" + gender);
             double alcohol = drinkSize * alcoholPer / 100.0000;
-            bac = ((alcoholConc * 5.1400) / (weight * 0.6600));
-            Log.d("A", "BACFeMale" + tF.format(bac) + ",weight " + weight + " alcoholConc" + alcoholConc);
+            bac = ((alcoholConc * 5.1400) / (newPounds * 0.6600));
+            Log.d("A", "BACFeMale" + tF.format(bac) + ",weight " + newPounds + " alcoholConc" + alcoholConc);
             return tF.format(bac);
         }
     }
 
-    /**
-     * Save Button
-     *
-     * @param view
-     */
-    public void saveAll(View view) {
-        double bacNew = 0.0;
-        if (checkNull()) {
 
-            int newPounds = Integer.parseInt(etWeight.getText().toString());
-
-//            drinkChange = Double.parseDouble(alcoholConcentration(drinkSize, alcoholPer, gender));
-            if (gender.equals("M")) {
-                bacNew = ((currentValue * 5.1400) / (newPounds * 0.73));
-                Log.d("A", "BACSaMale" + tF.format(bacNew) + ",weight " + newPounds);
-
-            } else {
-                bacNew = ((currentValue * 5.1400) / (newPounds * 0.66));
-                Log.d("A", "BACSaFeMale" + tF.format(bacNew) + ",weight " + newPounds);
-
-            }
-
-            tvResult.setText(tF.format(bacNew));
-            double dval = Math.round((bacNew) * 100);
-            int val = (int) dval;
-            pbStatus.setProgress(val);
-            displayStatus(tF.format(bacNew));
-        } else
-            setError();
-    }
     /*
      * Toast Message On Empty
      */
 
-    public void setError() {
-        Toast.makeText(getApplicationContext(), "Enter the weight in lbs.", Toast.LENGTH_SHORT).show();
+    public void setErrorMessage() {
+//        Toast.makeText(getApplicationContext(), "Enter the weight in lbs.", Toast.LENGTH_SHORT).show();
+        etWeight.setError("Enter the weight in lbs.");
+
     }
 
     public boolean checkNull() {
@@ -294,7 +274,7 @@ public class MainActivity extends AppCompatActivity {
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     public void displayStatus(String bacLevel) {
         Log.d("A", "BACLevel" + bacLevel);
-        Double bacVal = Double.parseDouble(bacLevel);
+        bacVal = Double.parseDouble(bacLevel);
         if (bacVal < 0.08) {
             Log.d("A", "Green");
             tvStatus.setText("You're safe.");
@@ -314,6 +294,46 @@ public class MainActivity extends AppCompatActivity {
             bsave.setEnabled(false);
         }
 
+    }
+
+    /**
+     * Save Button
+     *
+     * @param view
+     */
+
+    /**
+     * For the weight and gender to be used the user should press the SAVE button ..
+     * If they SAVE button was never pressed and the user clicks the ADD button print
+     * a toast indicating that the weight and gender should be entered and registered
+     * using the SAVE button before drinks can be added.
+     * @param view
+     */
+    public void saveAll(View view) {
+        double bacNew = 0.0;
+        if (checkNull()) {
+            isClicked = true;
+            newPounds = Integer.parseInt(etWeight.getText().toString());
+
+
+//            drinkChange = Double.parseDouble(alcoholConcentration(drinkSize, alcoholPer, gender));
+            if (gender.equals("M")) {
+                bacNew = (((currentValue) * 5.1400) / (newPounds * 0.73));
+                Log.d("A", "BACSaMale" + tF.format(bacNew) + ",weight " + newPounds+", CurrentVal" +currentValue+", Preval"+previousAlcoholVal);
+
+            } else {
+                bacNew = (((currentValue) * 5.1400) / (newPounds * 0.66));
+                Log.d("A", "BACSaFeMale" + tF.format(bacNew) + ",weight " + newPounds+", CurrentVal" +currentValue+", Preval"+previousAlcoholVal);
+
+            }
+
+            tvResult.setText(tF.format(bacNew));
+            double dval = Math.round((bacNew) * 100);
+            int val = (int) dval;
+            pbStatus.setProgress(val);
+            displayStatus(tF.format(bacNew));
+        } else
+            setErrorMessage();
     }
 
 
