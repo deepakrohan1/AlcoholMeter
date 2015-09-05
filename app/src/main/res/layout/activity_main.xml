@@ -172,20 +172,11 @@
 
         <TextView
             android:layout_width="wrap_content"
-            android:layout_marginLeft="70dp"
+            android:layout_marginLeft="90dp"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="@string/bacLevel"
-            android:id="@+id/bac_level"
-            android:layout_gravity="center_vertical" />
-
-        <TextView
-            android:layout_width="136dp"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="@string/nilVal"
-            android:id="@+id/resultBAC"
+            android:id="@+id/bacLevel"
             android:layout_gravity="center_vertical" />
 
 
