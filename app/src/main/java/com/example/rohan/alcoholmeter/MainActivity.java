@@ -19,6 +19,7 @@ import android.widget.SeekBar;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import java.text.DecimalFormat;
 
 public class MainActivity extends AppCompatActivity {
@@ -149,6 +150,7 @@ public class MainActivity extends AppCompatActivity {
         tvStatus.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.textviewlayout));
         sGender.setChecked(false);
         etWeight.setError(null);
+        sbalcohol.setProgress(0);
         //TODO: Check BAC field and Status field
     }
 
@@ -156,42 +158,28 @@ public class MainActivity extends AppCompatActivity {
      * addDrink
      */
     public void addDrink(View view) {
-
         alcoholPer = Integer.parseInt(((TextView) findViewById(R.id.textViewPerAlcohol)).getText().toString());
         Log.d("A", radioId + "");
         radioId = rgOz.getCheckedRadioButtonId();
-        Log.d("A", "Chrrrr" + radioId + "");
-        Log.d("A", "Progress " + alcoholPer + "" + "Weight " + newPounds + "Gender " + gender);
+        Log.d("A", "Progress " + alcoholPer + "" + "Weight " + newPounds + "Gender " + gender +", RadioId "+radioId);
         pbStatus.setMax(25);
         if (checkNull()) {
-
-
-
-                if (isClicked == true) {
-                    Log.d("A", "button_save true");
-
-                    if (radioId == ((RadioButton) findViewById(R.id.radioButtonOneOz)).getId()) {
-                        drinkSize = 1;
-                        bacLayoutUpdater(drinkSize, alcoholPer);
-//                alcoholConcentration(drinkSize,alcoholPer,gender);
-                    } else if (radioId == ((RadioButton) findViewById(R.id.radioButtonfiveOz)).getId()) {
-                        drinkSize = 5;
-                        bacLayoutUpdater(drinkSize, alcoholPer);
-//                alcoholConcentration(drinkSize, alcoholPer,gender);
-                    } else if (radioId == ((RadioButton) findViewById(R.id.radioButtonTwelveOz)).getId()) {
-                        drinkSize = 12;
-                        bacLayoutUpdater(drinkSize, alcoholPer);
-//                alcoholConcentration(drinkSize, alcoholPer,gender);
-
-                    } else {
-                        Log.d("A", "Error in radio selection");
-                    }
-                } else {
-                    Toast.makeText(getApplicationContext(), "Save the Weight to Proceed", Toast.LENGTH_LONG).show();
+            if (isClicked == true) {
+                Log.d("A", "button_save true");
+                if (radioId == ((RadioButton) findViewById(R.id.radioButtonOneOz)).getId()) {
+                    drinkSize = 1;
+                    bacLayoutUpdater(drinkSize, alcoholPer);
+                } else if (radioId == ((RadioButton) findViewById(R.id.radioButtonfiveOz)).getId()) {
+                    drinkSize = 5;
+                    bacLayoutUpdater(drinkSize, alcoholPer);
+                } else if (radioId == ((RadioButton) findViewById(R.id.radioButtonTwelveOz)).getId()) {
+                    drinkSize = 12;
+                    bacLayoutUpdater(drinkSize, alcoholPer);
                 }
-
+            } else {
+                Toast.makeText(getApplicationContext(), "Save the Weight and Gender to Proceed", Toast.LENGTH_LONG).show();
+            }
         } else {
-
             setErrorMessage();
         }
     }
@@ -201,16 +189,12 @@ public class MainActivity extends AppCompatActivity {
      */
 
     public void bacLayoutUpdater(int drinkSi, int alcoholPe) {
-//        alcoholConcentration(drinkSi,alcoholPe,gender);
         drinkChange = Double.parseDouble(alcoholConcentration(drinkSi, alcoholPe, gender));
-//        drinkChange = Double.parseDouble(bacCalculation(gender,alcoholPe));
-//        finalVal = previousDrink + drinkChange;
-//        previousDrink = finalVal;
         finalVal = drinkChange;
-        if (finalVal == 0){
+        if (finalVal == 0) {
             tvResult.setText("BAC Level: 0.00");
             pbStatus.setProgress(0);
-        }else {
+        } else {
             tvResult.setText("BAC Level: " + tF.format(finalVal));
         }
         double dval = Math.round((finalVal) * 100);
@@ -225,8 +209,6 @@ public class MainActivity extends AppCompatActivity {
      */
 
     public String alcoholConcentration(int drinkSize, int alcoholPer, String gender) {
-//        double previousAlcoholVal = ;
-
         currentValue = drinkSize * alcoholPer / 100.0000 + previousAlcoholVal;
         previousAlcoholVal = currentValue;
         Log.d("A", "Current Val " + f.format(currentValue) + ", Previos" + f.format(previousAlcoholVal));
@@ -240,7 +222,6 @@ public class MainActivity extends AppCompatActivity {
     public String bacCalculation(String gender, double alcoholConc) {
 
         double bac;
-//        weight = Integer.parseInt(etWeight.getText().toString());
         Log.d("A", "Progress " + alcoholPer + "" + "Weight " + newPounds + "Gender " + gender + "alcoholSi" + drinkSize);
         if (gender.equals("M")) {
 /*
@@ -251,12 +232,9 @@ public class MainActivity extends AppCompatActivity {
  *           c. r = a gender constant of alcohol distribution (.73 for men and .66 for women)
  *
 */
-//            double alcohol = drinkSize * alcoholPer / 100.0000;
             bac = ((alcoholConc * 5.1400) / (newPounds * 0.7300));
             Log.d("A", "BACMale" + f.format(bac) + ",weight " + newPounds + " alcoholConc" + alcoholConc);
             return tF.format(bac);
-
-
         } else {
             Log.d("A", "Invalid no gender selected:" + gender);
             double alcohol = drinkSize * alcoholPer / 100.0000;
@@ -266,23 +244,18 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
     /*
      * Toast Message On Empty
      */
-
     public void setErrorMessage() {
-//        Toast.makeText(getApplicationContext(), "Enter the weight in lbs.", Toast.LENGTH_SHORT).show();
-//        etWeight.setError("Enter the weight in lbs.");
         Log.e("A", "Invalid Weight");
-
     }
 
     public boolean checkNull() {
         if (etWeight.getText().toString().equals("")) {
             etWeight.setError("Enter Weight in lbs.");
             return false;
-        }else if(etWeight.getText().toString().equals("0")){
+        } else if (etWeight.getText().toString().equals("0")) {
             etWeight.setError("Enter a valid weight in lbs.");
             return false;
         }
@@ -310,7 +283,6 @@ public class MainActivity extends AppCompatActivity {
             Log.d("A", "Disable, Red");
             tvStatus.setText("Over the Limit!");
             tvStatus.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.textviewred));
-
         } else if (bacVal >= 0.25) {
             Toast.makeText(getApplicationContext(), "No more drinks for you", Toast.LENGTH_LONG).show();
             bAddDrink.setEnabled(false);
@@ -338,10 +310,6 @@ public class MainActivity extends AppCompatActivity {
         if (checkNull()) {
             isClicked = true;
             newPounds = Integer.parseInt(etWeight.getText().toString());
-
-
-
-//            drinkChange = Double.parseDouble(alcoholConcentration(drinkSize, alcoholPer, gender));
             if (gender.equals("M")) {
                 bacNew = (((currentValue) * 5.1400) / (newPounds * 0.73));
                 Log.d("A", "BACSaMale" + tF.format(bacNew) + ",weight " + newPounds + ", CurrentVal" + currentValue + ", Preval" + previousAlcoholVal);
@@ -351,10 +319,10 @@ public class MainActivity extends AppCompatActivity {
                 Log.d("A", "BACSaFeMale" + tF.format(bacNew) + ",weight " + newPounds + ", CurrentVal" + currentValue + ", Preval" + previousAlcoholVal);
 
             }
-            if(tF.format(bacNew).equals("0")){
+            if (tF.format(bacNew).equals("0")) {
                 tvResult.setText("BAC Level: 0.00 ");
                 pbStatus.setProgress(0);
-            }else {
+            } else {
                 tvResult.setText("BAC Level: " + tF.format(bacNew));
                 double dval = Math.round((bacNew) * 100);
                 int val = (int) dval;
