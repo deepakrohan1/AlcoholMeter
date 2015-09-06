@@ -255,7 +255,7 @@ public class MainActivity extends AppCompatActivity {
         if (etWeight.getText().toString().equals("")) {
             etWeight.setError("Enter Weight in lbs.");
             return false;
-        } else if (etWeight.getText().toString().equals("0")) {
+        } else if (Integer.parseInt(etWeight.getText().toString()) == 0) {
             etWeight.setError("Enter a valid weight in lbs.");
             return false;
         }
